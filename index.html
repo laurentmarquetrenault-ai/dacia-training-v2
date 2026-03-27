@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulation Atelier Dacia</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="title-wrap">
+        <h1>Simulation Atelier Dacia</h1>
+        <p>Entraînement commercial CEP / CEP+ avec mode démo et mode évaluation.</p>
+      </div>
+      <div class="badge" id="modeBadge">Mode Démo</div>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="panel-title">
+            <h2>Cliente</h2>
+            <span class="sub">Réaction en direct</span>
+          </div>
+
+          <div class="client-card">
+            <div class="avatar-box">
+              <img id="avatar" src="/images/neutral.jpg" alt="Cliente" />
+            </div>
+
+            <div>
+              <div class="trust-label">
+                <span>Niveau de confiance</span>
+                <span id="trustText">50%</span>
+              </div>
+              <div class="trust-shell">
+                <div id="trust"></div>
+              </div>
+            </div>
+
+            <div class="skills-box">
+              <div class="skills-title">Blocs de compétences validés</div>
+              <div class="skills-row">
+                <div class="skill-star" id="skill-welcome" aria-checked="false">★<span>Accueil</span></div>
+                <div class="skill-star" id="skill-discovery" aria-checked="false">★<span>Découverte</span></div>
+                <div class="skill-star" id="skill-argumentation" aria-checked="false">★<span>Argumentation</span></div>
+                <div class="skill-star" id="skill-objection" aria-checked="false">★<span>Objections</span></div>
+                <div class="skill-star" id="skill-closing" aria-checked="false">★<span>Conclusion</span></div>
+              </div>
+            </div>
+
+            <div class="chips">
+              <span class="chip">Proposition spontanée</span>
+              <span class="chip">Valeur client</span>
+              <span class="chip">Objections</span>
+              <span class="chip">Closing</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="panel-title">
+            <h2>Simulation</h2>
+            <span class="sub">Atelier Dacia</span>
+          </div>
+
+          <div class="sim-header">
+            <div class="field">
+              <label for="mode">Mode</label>
+              <select id="mode">
+                <option value="demo">Mode Démo</option>
+                <option value="eval">Mode Évaluation</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="profil">Profil client</label>
+              <select id="profil">
+                <option value="hesitant">Hésitant</option>
+                <option value="mefiant">Méfiant</option>
+                <option value="prix">Orienté prix</option>
+                <option value="sceptique">Sceptique</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="scenario">Scénario atelier</label>
+              <select id="scenario">
+                <option value="revision">Révision</option>
+                <option value="facture">Facture élevée</option>
+                <option value="fin-garantie">Fin garantie</option>
+                <option value="usure">Usure</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="vehicleAge">Âge véhicule</label>
+              <select id="vehicleAge">
+                <option value="1 an">1 an</option>
+                <option value="2 ans">2 ans</option>
+                <option value="3 ans">3 ans</option>
+                <option value="4 ans">4 ans</option>
+                <option value="5 ans">5 ans</option>
+                <option value="6 ans">6 ans</option>
+                <option value="7 ans">7 ans</option>
+                <option value="8 ans">8 ans</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="energyType">Motorisation</label>
+              <select id="energyType">
+                <option value="essence_gpl">Essence / GPL</option>
+                <option value="diesel">Diesel</option>
+                <option value="hybrid">Hybride</option>
+                <option value="ev">Électrique</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="briefBox" class="brief-box">
+            <div class="brief-title">Situation client</div>
+            <div id="briefText"></div>
+          </div>
+
+          <div id="chat"></div>
+
+          <div class="chat-footer">
+            <input id="input" placeholder="Votre réponse..." />
+            <button class="btn btn-primary" id="sendBtn">Envoyer</button>
+            <button class="btn btn-secondary" id="finishDemoBtn">Terminer la démo</button>
+            <button class="btn btn-secondary" id="newDemoBtn">Nouvelle démo</button>
+          </div>
+
+          <div id="endMessage" class="hidden">
+            <h3 id="endTitle">Fin de simulation</h3>
+            <div class="sub" id="endSubtitle" style="margin-bottom:10px;">
+              La discussion est terminée. Lance maintenant l’évaluation.
+            </div>
+            <button class="btn btn-primary" id="evalBtn">Voir évaluation</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="help-head">
+            <div>
+              <h2 style="margin:0 0 4px;">Aide vendeur</h2>
+              <div class="sub">Pense-bête discret</div>
+            </div>
+            <span class="mini-tag">CEP / CEP+</span>
+          </div>
+
+          <button class="btn btn-secondary" id="toggleHelpBtn">Afficher aide</button>
+
+          <div id="helpBox" class="hidden">
+            <div class="help-section">
+              <h4>Tarifs repères</h4>
+              <div class="price-grid">
+                <div class="price-card">
+                  <div class="name">CEP</div>
+                  <div class="value" id="cepPrice">29€ / mois</div>
+                </div>
+                <div class="price-card">
+                  <div class="name">CEP+</div>
+                  <div class="value" id="ceppPrice">59€ / mois</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="help-section">
+              <h4>Angle conseillé</h4>
+              <ul class="help-list">
+                <li id="helpRecommendation">CEP si client surtout sensible à l’entretien, CEP+ si besoin de couverture plus large.</li>
+                <li id="helpAngle">Budget maîtrisé pendant 48 mois, assistance 24/7, entretien dans le réseau, revente facilitée.</li>
+              </ul>
+            </div>
+
+            <div class="help-section">
+              <h4>Rappel closing</h4>
+              <ul class="help-list">
+                <li>Faire une proposition claire</li>
+                <li>Demander une décision</li>
+                <li>En évaluation : pas de note solide sans vraie tentative de conclusion</li>
+              </ul>
+            </div>
+
+            <div class="help-section">
+              <h4>Rappels métier</h4>
+              <ul class="help-list">
+                <li>Souscription possible de 1 à 8 ans + 6 mois selon les cas, avec 120 000 km max à la souscription</li>
+                <li>Durée max 48 mois</li>
+                <li>Fin de contrat max 200 000 km</li>
+                <li>Pense à vérifier année, kilométrage, contrat existant et faisabilité Particeep</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
