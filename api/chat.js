@@ -38,11 +38,12 @@ export default async function handler(req, res) {
     const prices = getPriceTable(vehicleAge, energyType);
 
     const profileMap = {
-      hesitant: "cliente hésitante, pas hostile, mais pas convaincue d'avance",
-      mefiant: "cliente méfiante, prudente, peu confiante",
-      prix: "cliente orientée prix, focalisée sur le coût",
-      sceptique: "cliente sceptique, doute de l'intérêt du contrat"
-    };
+  convaincu: "cliente déjà plutôt favorable, ouverte, prête à avancer si l'explication est correcte",
+  hesitant: "cliente hésitante, pas hostile, mais pas convaincue d'avance",
+  mefiant: "cliente méfiante, prudente, peu confiante",
+  prix: "cliente orientée prix, focalisée sur le coût",
+  sceptique: "cliente sceptique, doute de l'intérêt du contrat"
+};
 
     const scenarioMap = {
       revision: "vous venez pour une révision classique",
