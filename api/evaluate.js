@@ -66,7 +66,8 @@ BASE MÉTIER À RESPECTER :
 - CEP = assistance + entretien + véhicule de remplacement + extension de garantie + éléments d'entretien.
 - CEP+ = CEP + pièces d'usure + contrôle technique + MyCheckUp + contre-visite + batterie 12V + balais + freinage + amortisseurs + ampoules + bougies de préchauffage + pile carte.
 - Dacia Zen : activable pour véhicule entre 3 et 7 ans max, couverture constructeur max 150 000 km et 30 000 km/an.
-- Arguments clés : budget maîtrisé pendant 48 mois, respect entretien, longévité avec pièces d'origine Dacia, revente facilitée, assistance, véhicule de remplacement, extension de garantie selon conditions.
+- Arguments clés particuliers : budget maîtrisé pendant 48 mois, respect de l'entretien, longévité avec pièces d'origine Dacia, revente facilitée, assistance, véhicule de remplacement, extension de garantie selon conditions.
+- Arguments clés professionnels : maîtrise du budget, limitation des imprévus, continuité d'usage du véhicule, limitation de l'immobilisation, intérêt concret pour l'activité, véhicule de remplacement si pertinent.
 - Objections / réponses conseillées :
   - trop cher -> une panne hors garantie peut coûter bien plus
   - je verrai plus tard -> la révision déjà faite ne sera pas comprise
@@ -94,12 +95,21 @@ CONTEXTE :
 SIGNAUX LIVE FRONT :
 ${skillSummary(liveSkills)}
 
+RÈGLES D'ÉVALUATION SPÉCIFIQUES SELON LE PROFIL :
+- Si le profil est "pro", tu dois évaluer si le vendeur a réellement adapté son discours à une cliente professionnelle.
+- Pour un profil pro, un bon vendeur doit parler concrètement de budget, imprévus, continuité d'usage, immobilisation évitée, intérêt économique ou opérationnel.
+- Pour un profil pro, un discours trop générique ou trop orienté particulier doit être sanctionné dans l'argumentation, même s'il reste poli ou fluide.
+- Pour un profil pro, la meilleure relance doit être courte, crédible et orientée usage professionnel.
+- Pour un profil particulier, évalue normalement selon la logique commerciale classique atelier.
+
 CONSIGNES :
 - Sois exigeant mais juste.
 - Si le vendeur donne un mauvais prix ou un argument faux, dis-le.
 - Tiens compte de la logique commerciale et de la cohérence métier.
 - Ne récompense pas juste la politesse : récompense l'efficacité utile.
 - Donne un feedback exploitable.
+- Ne surévalues pas artificiellement un échange moyen.
+- Si le profil est pro et que l'adaptation n'est pas réelle, dis-le clairement.
 
 FORMAT DE SORTIE OBLIGATOIRE :
 Bilan final
@@ -121,9 +131,11 @@ Axes de progrès
 Correction métier
 - Dis si les prix, l'offre ou l'angle conseillé étaient justes ou non
 - Si besoin, corrige précisément
+- Si le profil était pro, précise si l'argumentation était vraiment adaptée au professionnel ou trop orientée particulier
 
 Meilleure relance possible
 - Propose une formulation vendeur courte et crédible qui aurait pu mieux faire avancer la vente
+- Si le profil est pro, fais une relance adaptée à un client professionnel
 `;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
