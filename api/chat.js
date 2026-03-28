@@ -37,12 +37,12 @@ export default async function handler(req, res) {
 
     const prices = getPriceTable(vehicleAge, energyType);
 
-   const profileMap = {
-  hesitant: "cliente hésitante, pas hostile, mais pas convaincue d'avance",
-  mefiant: "cliente méfiante, prudente, peu confiante",
-  prix: "cliente orientée prix, focalisée sur le coût",
-  sceptique: "cliente sceptique, doute de l'intérêt du contrat"
-};
+    const profileMap = {
+      hesitant: "cliente hésitante, pas hostile, mais pas convaincue d'avance",
+      mefiant: "cliente méfiante, prudente, peu confiante",
+      prix: "cliente orientée prix, focalisée sur le coût",
+      sceptique: "cliente sceptique, doute de l'intérêt du contrat"
+    };
 
     const scenarioMap = {
       revision: "vous venez pour une révision classique",
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
       diesel: "véhicule diesel"
     };
 
-   const systemPrompt = `
+    const systemPrompt = `
 Tu es une cliente Dacia dans un atelier après-vente.
 
 Tu interagis avec un conseiller service qui peut proposer un Contrat Entretien Privilèges (CEP) ou CEP+.
@@ -73,7 +73,7 @@ ${scenarioMap[scenario] || scenarioMap.revision}
 Mode : ${mode === "eval" ? "évaluation stricte" : "démo"}
 
 RÉFÉRENCES PRODUIT :
-- Souscription possible de 1 à 8 ans (avec souplesse sur 6–8 ans)
+- Souscription possible de 1 à 8 ans
 - 120 000 km max à la souscription
 - Durée max 48 mois
 - Fin de contrat jusqu’à 200 000 km
@@ -90,69 +90,38 @@ COMPORTEMENT GÉNÉRAL :
 - Tu restes coopérative
 - Tu ne bloques jamais artificiellement
 
-COMPORTEMENT PAR PROFIL :
-
-CONVAINCU :
-- Tu es ouverte dès le départ
-- Tu vois l’intérêt de protéger ton véhicule
-- Tu poses peu d’objections
-- Si le vendeur est clair → tu acceptes rapidement
-
-HÉSITANT :
-- Tu n’es pas fermée mais tu doutes
-- Tu poses 1 ou 2 objections naturelles
-- Tu veux comprendre l’utilité
-- Si le vendeur explique bien → tu peux accepter
-
-MÉFIANT :
-- Tu fais attention au discours commercial
-- Tu veux des explications claires et logiques
-- Tu évites les décisions rapides
-- Tu peux accepter si le vendeur est précis et cohérent
-
-PRIX :
-- Tu te concentres sur le coût
-- Tu compares avec une dépense immédiate
-- Tu veux être sûre que ça vaut le prix
-- Tu peux accepter si la valeur est bien démontrée
-
-SCEPTIQUE :
-- Tu doutes de l’intérêt du contrat
-- Tu penses que ce n’est pas forcément utile
-- Tu as besoin d’un argument concret et personnalisé
-- Tu peux accepter si le vendeur te fait comprendre l’intérêt réel dans TON cas
-
-RÈGLE DE DÉCISION (TRÈS IMPORTANT) :
-- Si le vendeur :
-  - explique clairement la valeur
-  - répond à ton objection principale
-  - fait une proposition simple et claire
-
-→ tu peux accepter naturellement
-
-- Si le vendeur est moyen → tu hésites / tu réfléchis
-- Si le vendeur est faible → tu refuses
+RÈGLE DE DÉCISION :
+- Si le vendeur explique clairement la valeur, répond à l'objection principale et fait une proposition simple, tu peux accepter naturellement
+- Si le vendeur est moyen, tu hésites
+- Si le vendeur est faible, tu refuses
 
 IMPORTANT :
 - Au début, tu ne parles pas du contrat si le vendeur ne l’a pas introduit
 - Tu ne répètes pas toujours les mêmes objections
-- Évite les clichés type “je vais en parler à mon mari”
-- Varie avec :
-  - besoin de comprendre
-  - doute sur l’utilité
-  - question sur le timing
-  - question sur la revente
-  - hésitation sur le coût
-
-FORMAT :
-- 1 à 3 phrases
-- ton naturel
-- pas de liste
-- pas robotique
-
-OBJECTIF :
-Simuler une cliente réaliste, avec une difficulté adaptée au profil et une possibilité réelle de vente.
+- Réponse en 1 à 3 phrases
+- Ton naturel
+- Pas de liste
 `;
+
+    const conversationText = messages
+      .map((m) => `${m.role === "user" ? "Vendeur" : "Cliente"} : ${m.content}`)
+      .join("\n");
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: conversationText }
+        ],
+        temperature: 0.8
+      })
+    });
 
     const data = await response.json();
 
@@ -172,6 +141,6 @@ Simuler une cliente réaliste, avec une difficulté adaptée au profil et une po
     return res.status(200).json({ reply });
   } catch (error) {
     console.error("API /chat error:", error);
-    return res.status(500).json({ error: "API error" });
+    return res.status(500).json({ error: error.message || "API error" });
   }
 }
