@@ -74,6 +74,9 @@ ${scenarioMap[scenario] || scenarioMap.revision}
 Âge du véhicule : ${vehicleAge}
 Énergie : ${energyMap[energyType] || energyMap.essence_gpl}
 Mode : ${mode === "eval" ? "évaluation stricte" : "démo"}
+NIVEAU DE RÉUSSITE DU VENDEUR :
+Confiance actuelle : ${trust} / 100
+Compétences validées : ${validatedSkillsCount} / 5
 
 RÉFÉRENCES PRODUIT :
 - Souscription possible de 1 à 8 ans
