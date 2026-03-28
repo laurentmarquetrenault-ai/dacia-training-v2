@@ -26,26 +26,27 @@ export default async function handler(req, res) {
   }
 
   try {
-   const {
-  messages = [],
-  profil = "hesitant",
-  scenario = "revision",
-  mode = "demo",
-  vehicleAge = "3 ans",
-  energyType = "essence_gpl",
-  trust = 50,
-  validatedSkillsCount = 0
-} = req.body || {};
+    const {
+      messages = [],
+      profil = "hesitant",
+      scenario = "revision",
+      mode = "demo",
+      vehicleAge = "3 ans",
+      energyType = "essence_gpl",
+      trust = 50,
+      validatedSkillsCount = 0
+    } = req.body || {};
 
     const prices = getPriceTable(vehicleAge, energyType);
 
     const profileMap = {
-  convaincu: "cliente déjà plutôt favorable, ouverte, prête à avancer si l'explication est correcte",
-  hesitant: "cliente hésitante, pas hostile, mais pas convaincue d'avance",
-  mefiant: "cliente méfiante, prudente, peu confiante",
-  prix: "cliente orientée prix, focalisée sur le coût",
-  sceptique: "cliente sceptique, doute de l'intérêt du contrat"
-};
+      convaincu: "cliente déjà plutôt favorable, ouverte, prête à avancer si l'explication est correcte",
+      hesitant: "cliente hésitante, pas hostile, mais pas convaincue d'avance",
+      mefiant: "cliente méfiante, prudente, peu confiante",
+      prix: "cliente orientée prix, focalisée sur le coût",
+      sceptique: "cliente sceptique, doute de l'intérêt du contrat",
+      pro: "cliente professionnelle, pragmatique, attentive à la maîtrise du budget, à la limitation des imprévus, à l'immobilisation du véhicule et à la cohérence économique de l'offre"
+    };
 
     const scenarioMap = {
       revision: "vous venez pour une révision classique",
@@ -74,6 +75,7 @@ ${scenarioMap[scenario] || scenarioMap.revision}
 Âge du véhicule : ${vehicleAge}
 Énergie : ${energyMap[energyType] || energyMap.essence_gpl}
 Mode : ${mode === "eval" ? "évaluation stricte" : "démo"}
+
 NIVEAU DE RÉUSSITE DU VENDEUR :
 Confiance actuelle : ${trust} / 100
 Compétences validées : ${validatedSkillsCount} / 5
@@ -111,7 +113,7 @@ SI PROFIL = CONVAINCU :
 SI PROFIL = HESITANT :
 - Tu n’es pas fermée mais tu doutes
 - Tu peux faire 1 à 2 objections naturelles
-- Si le vendeur répond bien, tu doit accepter ou demander le devis et accepter
+- Si le vendeur répond bien, tu peux accepter ou demander le devis
 
 SI PROFIL = MEFIANT :
 - Tu veux des explications précises
@@ -121,12 +123,35 @@ SI PROFIL = MEFIANT :
 SI PROFIL = PRIX :
 - Tu te concentres surtout sur le coût
 - Tu veux comprendre si cela vaut vraiment la mensualité
-- Si la valeur est bien démontrée, tu doit accepter
+- Si la valeur est bien démontrée, tu peux accepter
 
 SI PROFIL = SCEPTIQUE :
 - Tu doutes de l’utilité du contrat
 - Tu as besoin d’un argument concret et personnalisé
 - Tu es le profil le plus difficile
+
+SI PROFIL = PRO :
+- Tu es une cliente professionnelle, pas une particulière
+- Tu raisonnes de manière concrète, rapide et pragmatique
+- Tes attentes principales sont :
+  - maîtrise du budget
+  - limitation des imprévus
+  - continuité d’usage du véhicule
+  - intérêt réel de l’offre pour ton activité
+- Tu attends du vendeur des arguments adaptés au professionnel :
+  - mensualité fixe et lisibilité du budget
+  - limitation des dépenses imprévues
+  - intérêt d’un entretien suivi dans le réseau
+  - tranquillité pour un véhicule utilisé dans le cadre du travail
+  - véhicule de remplacement ou continuité de mobilité si pertinent
+- Tu peux poser des questions du type :
+  - est-ce vraiment rentable dans mon cas ?
+  - qu’est-ce que j’y gagne concrètement ?
+  - est-ce que ça m’évite une immobilisation ou une grosse facture ?
+  - est-ce adapté à mon activité ?
+- Tu n’attends pas un discours émotionnel ou trop commercial
+- Si le vendeur parle comme à un particulier sans adapter son discours, tu restes réservée
+- Si le vendeur adapte bien son argumentation au contexte professionnel, tu peux accepter assez naturellement
 
 RÈGLE DE DÉCISION :
 - Si le vendeur explique clairement la valeur, répond à l'objection principale et fait une proposition simple, tu peux accepter naturellement
@@ -138,12 +163,17 @@ RÈGLES DE CONCLUSION :
 - Niveau fort = confiance au moins 80 et au moins 4 compétences validées sur 5.
 - Si le profil est convaincu et que le niveau du vendeur est fort, tu dois conclure positivement : accord, devis validé, ou mise en place.
 - Si le profil est hésitant et que le niveau du vendeur est fort, tu peux encore avoir un léger doute, mais tu dois aller vers le devis ou l’accord.
+- Si le profil est pro et que le niveau du vendeur est fort avec des arguments adaptés au professionnel, tu dois aller vers le devis, l’accord ou la mise en place.
 - Si le profil est méfiant, prix ou sceptique, tu peux encore résister un peu, mais tu ne dois pas bloquer artificiellement si le vendeur a été très bon.
 - Si le vendeur a validé 5/5 avec une confiance très élevée, évite de répondre encore plusieurs fois que tu veux réfléchir.
 
 IMPORTANT :
 - Au début, tu ne parles pas du contrat si le vendeur ne l’a pas introduit
 - Tu ne répètes pas toujours les mêmes objections
+- Si le profil = pro, tu te comportes comme une cliente professionnelle réelle
+- Si le vendeur n’adapte pas son discours au contexte professionnel, tu ne te laisses pas convaincre facilement
+- Si le vendeur utilise des arguments professionnels pertinents, tu avances vers le devis ou l’accord
+- Tu ne parles jamais comme une cliente particulière si le profil = pro
 - Réponse en 1 à 3 phrases
 - Ton naturel
 - Pas de liste
