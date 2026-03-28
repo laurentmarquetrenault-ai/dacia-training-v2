@@ -448,7 +448,7 @@ async function send() {
 
   updateTrustFromSellerMessage(val);
   updateSkillsFromSellerMessage(val);
-
+const validatedSkillsCount = Object.values(skills).filter(Boolean).length;
   const payload = {
   messages,
   profil: profilSelect.value,
@@ -457,7 +457,8 @@ async function send() {
   vehicleAge: vehicleAgeSelect.value,
   energyType: energyTypeSelect.value,
   liveSkills: skills,
-  trust
+  trust,
+  validatedSkillsCount
 };
   try {
     const res = await fetch("/api/chat", {
