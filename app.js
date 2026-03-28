@@ -450,15 +450,15 @@ async function send() {
   updateSkillsFromSellerMessage(val);
 
   const payload = {
-    messages,
-    profil: profilSelect.value,
-    scenario: scenarioSelect.value,
-    mode: modeSelect.value,
-    vehicleAge: vehicleAgeSelect.value,
-    energyType: energyTypeSelect.value,
-    liveSkills: skills
-  };
-
+  messages,
+  profil: profilSelect.value,
+  scenario: scenarioSelect.value,
+  mode: modeSelect.value,
+  vehicleAge: vehicleAgeSelect.value,
+  energyType: energyTypeSelect.value,
+  liveSkills: skills,
+  trust
+};
   try {
     const res = await fetch("/api/chat", {
       method: "POST",
