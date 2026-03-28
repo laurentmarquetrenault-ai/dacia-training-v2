@@ -26,14 +26,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const {
-      messages = [],
-      profil = "hesitant",
-      scenario = "revision",
-      mode = "demo",
-      vehicleAge = "3 ans",
-      energyType = "essence_gpl"
-    } = req.body || {};
+   const {
+  messages = [],
+  profil = "hesitant",
+  scenario = "revision",
+  mode = "demo",
+  vehicleAge = "3 ans",
+  energyType = "essence_gpl",
+  trust = 50,
+  validatedSkillsCount = 0
+} = req.body || {};
 
     const prices = getPriceTable(vehicleAge, energyType);
 
