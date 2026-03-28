@@ -119,16 +119,20 @@ function getSelectedPrices() {
 
 function updateHelpPrices() {
   const prices = getSelectedPrices();
-  cepPrice.textContent = `${prices.cep}€ / mois`;
-  ceppPrice.textContent = `${prices.cepp}€ / mois`;
-
   const scenario = scenarioSelect.value;
   const age = getAgeNumber();
+  const profil = profilSelect.value;
+
+  cepPrice.textContent = `${prices.cep}€ / mois`;
+  ceppPrice.textContent = `${prices.cepp}€ / mois`;
 
   let reco = "CEP si client surtout sensible à l’entretien, CEP+ si besoin de couverture plus large.";
   let angle = "Budget maîtrisé pendant 48 mois, assistance 24/7, entretien dans le réseau, revente facilitée.";
 
-  if (scenario === "usure" || scenario === "facture") {
+  if (profil === "pro") {
+    reco = "Avec un client professionnel, mets d’abord en avant le CEP pour la lisibilité budgétaire, puis le CEP+ si le besoin d’éviter les imprévus d’usure est fort.";
+    angle = "Parle concret : budget fixe, réduction des imprévus, continuité d’usage du véhicule, limitation de l’immobilisation, intérêt réel pour l’activité.";
+  } else if (scenario === "usure" || scenario === "facture") {
     reco = "CEP+ recommandé : scénario usure ou facture élevée, la couverture renforcée a plus de sens.";
     angle = "Mets l’accent sur les pièces d’usure, la tranquillité et l’évitement des grosses factures imprévues.";
   } else if (scenario === "fin-garantie" && age >= 3 && age <= 7) {
@@ -182,25 +186,46 @@ function generateBrief() {
   const age = vehicleAgeSelect.value;
   const mode = modeSelect.value;
   const isEval = mode === "eval";
+  const profil = profilSelect.value;
 
   let text = "";
 
-  if (scenario === "revision") {
-    text = `Vous attendez Madame Dubois pour une révision.
+  if (profil === "pro") {
+    if (scenario === "revision") {
+      text = `Vous recevez un client professionnel pour une révision.
+Son véhicule (${age}) est éligible au Contrat Entretien Privilèges.
+${isEval ? "Vous serez évalué sur votre capacité à adapter votre discours à un usage professionnel." : "À vous de proposer une solution crédible avec des arguments concrets : budget, imprévus, continuité d’usage."}`;
+    } else if (scenario === "facture") {
+      text = `Vous recevez un client professionnel après une facture atelier élevée.
+Son véhicule (${age}) est éligible au contrat d’entretien.
+${isEval ? "Vous serez évalué sur votre capacité à transformer une facture subie en argument de maîtrise budgétaire." : "À vous de montrer l’intérêt concret du contrat pour limiter les imprévus et sécuriser l’activité."}`;
+    } else if (scenario === "fin-garantie") {
+      text = `Vous recevez un client professionnel dont le véhicule arrive en fin de garantie.
+Son véhicule (${age}) est éligible à une solution de protection.
+${isEval ? "Vous serez évalué sur votre capacité à adapter votre recommandation au cadre professionnel." : "À vous de valoriser la continuité d’usage, la visibilité budgétaire et la cohérence économique."}`;
+    } else if (scenario === "usure") {
+      text = `Vous recevez un client professionnel pour un sujet d’usure.
+Son véhicule (${age}) est éligible au contrat d’entretien.
+${isEval ? "Vous serez évalué sur votre capacité à orienter vers la bonne couverture selon l’usage professionnel." : "À vous d’amener la solution la plus pertinente pour réduire les immobilisations et les dépenses imprévues."}`;
+    }
+  } else {
+    if (scenario === "revision") {
+      text = `Vous attendez Madame Dubois pour une révision.
 Son véhicule (${age}) est éligible au Contrat Entretien Privilèges.
 ${isEval ? "Votre objectif est de mener un échange complet et structuré." : "À vous de mener l’échange et de proposer la solution adaptée."}`;
-  } else if (scenario === "facture") {
-    text = `Vous recevez une cliente après une facture atelier élevée.
+    } else if (scenario === "facture") {
+      text = `Vous recevez une cliente après une facture atelier élevée.
 Son véhicule (${age}) est éligible au contrat d’entretien.
 ${isEval ? "Vous serez évalué sur votre capacité à rassurer et argumenter." : "À vous de sécuriser votre argumentation."}`;
-  } else if (scenario === "fin-garantie") {
-    text = `Vous recevez une cliente dont le véhicule arrive en fin de garantie.
+    } else if (scenario === "fin-garantie") {
+      text = `Vous recevez une cliente dont le véhicule arrive en fin de garantie.
 Son véhicule (${age}) est éligible à une solution de protection.
 ${isEval ? "Vous serez évalué sur la découverte, l’argumentation et la conclusion." : "À vous de jouer."}`;
-  } else if (scenario === "usure") {
-    text = `Vous recevez une cliente pour un sujet d’usure.
+    } else if (scenario === "usure") {
+      text = `Vous recevez une cliente pour un sujet d’usure.
 Son véhicule (${age}) est éligible au contrat d’entretien.
 ${isEval ? "Vous serez évalué sur la pertinence de votre recommandation." : "À vous d’amener la bonne couverture."}`;
+    }
   }
 
   briefText.innerHTML = text.replace(/\n/g, "<br>");
@@ -247,6 +272,7 @@ function toggleHelp() {
 
 function updateTrustFromSellerMessage(text) {
   const t = text.toLowerCase();
+  const profil = profilSelect.value;
 
   let delta = -4;
 
@@ -259,6 +285,28 @@ function updateTrustFromSellerMessage(text) {
     "véhicule de remplacement", "hors garantie", "extension de garantie"
   ];
 
+  const proSignals = [
+    "activité",
+    "professionnel",
+    "professionnelle",
+    "usage pro",
+    "usage professionnel",
+    "budget fixe",
+    "maîtrise du budget",
+    "imprévu",
+    "imprévus",
+    "immobilisation",
+    "continuité",
+    "continuité d'usage",
+    "continuité d’usage",
+    "rentable",
+    "rentabilité",
+    "coût maîtrisé",
+    "coût fixe",
+    "outil de travail",
+    "véhicule de travail"
+  ];
+
   const badSignals = [
     "comme vous voulez",
     "je sais pas",
@@ -268,9 +316,11 @@ function updateTrustFromSellerMessage(text) {
   ];
 
   const hasGood = goodSignals.some((word) => t.includes(word));
+  const hasProGood = proSignals.some((word) => t.includes(word));
   const hasBad = badSignals.some((word) => t.includes(word));
 
   if (hasGood) delta = 8;
+  if (profil === "pro" && hasProGood) delta += 4;
   if (hasBad) delta = -12;
 
   trust += delta;
@@ -290,6 +340,8 @@ function sellerLooksLikeWelcome(text) {
 
 function sellerLooksLikeDiscovery(text) {
   const t = text.toLowerCase();
+  const profil = profilSelect.value;
+
   const discoverySignals = [
     "combien de kilomètres",
     "kilométr",
@@ -307,13 +359,39 @@ function sellerLooksLikeDiscovery(text) {
     "quelle utilisation"
   ];
 
-  return discoverySignals.some((q) => t.includes(q));
+  const proDiscoverySignals = [
+    "usage professionnel",
+    "usage pro",
+    "dans le cadre de votre activité",
+    "pour votre activité",
+    "outil de travail",
+    "vous en servez pour travailler",
+    "si le véhicule est immobilisé",
+    "si la voiture est immobilisée",
+    "ça impacte votre activité",
+    "vous avez besoin du véhicule tous les jours"
+  ];
+
+  const baseMatch = discoverySignals.some((q) => t.includes(q));
+  const proMatch = proDiscoverySignals.some((q) => t.includes(q));
+
+  if (profil === "pro") {
+    return baseMatch || proMatch;
+  }
+
+  return baseMatch;
 }
 
 function sellerLooksLikeArgumentation(text) {
   const t = text.toLowerCase();
+  const profil = profilSelect.value;
 
-  const mentionProduct = t.includes("cep") || t.includes("cep+") || t.includes("contrat entretien") || t.includes("contrat d'entretien");
+  const mentionProduct =
+    t.includes("cep") ||
+    t.includes("cep+") ||
+    t.includes("contrat entretien") ||
+    t.includes("contrat d'entretien");
+
   const mentionBenefit = [
     "budget maîtrisé",
     "mensual",
@@ -329,11 +407,32 @@ function sellerLooksLikeArgumentation(text) {
     "éviter une grosse facture"
   ].some((item) => t.includes(item));
 
+  const proBenefit = [
+    "budget fixe",
+    "maîtrise du budget",
+    "imprévu",
+    "imprévus",
+    "immobilisation",
+    "continuité",
+    "activité",
+    "outil de travail",
+    "rentable",
+    "rentabilité",
+    "véhicule de travail",
+    "continuité d'usage",
+    "continuité d’usage"
+  ].some((item) => t.includes(item));
+
+  if (profil === "pro") {
+    return mentionProduct && (mentionBenefit || proBenefit);
+  }
+
   return mentionProduct && mentionBenefit;
 }
 
 function clientRaisedObjection(text) {
   const t = (text || "").toLowerCase();
+
   const objectionTerms = [
     "trop cher",
     "pas sûre",
@@ -349,7 +448,16 @@ function clientRaisedObjection(text) {
     "j'hésite",
     "je revends",
     "avant de m'engager",
-    "avec mon partenaire"
+    "avec mon partenaire",
+    "est-ce rentable",
+    "ce que j'y gagne",
+    "qu'est-ce que j'y gagne",
+    "ça m'apporte quoi",
+    "ça m’évite quoi",
+    "ça m'évite quoi",
+    "est-ce adapté à mon activité",
+    "ça vaut vraiment le coup pour mon activité",
+    "je ne veux pas payer pour rien"
   ];
 
   return objectionTerms.some((item) => t.includes(item));
@@ -357,6 +465,7 @@ function clientRaisedObjection(text) {
 
 function sellerLooksLikeObjectionHandling(text) {
   const t = text.toLowerCase();
+  const profil = profilSelect.value;
 
   const reassuringTerms = [
     "je comprends",
@@ -377,7 +486,29 @@ function sellerLooksLikeObjectionHandling(text) {
     "pas seulement aux kilomètres"
   ];
 
-  return reassuringTerms.some((item) => t.includes(item));
+  const proReassuringTerms = [
+    "maîtriser votre budget",
+    "budget fixe",
+    "éviter l'immobilisation",
+    "éviter une immobilisation",
+    "limiter les imprévus",
+    "continuité",
+    "continuité d'usage",
+    "continuité d’usage",
+    "activité",
+    "outil de travail",
+    "rentable",
+    "rentabilité"
+  ];
+
+  const baseMatch = reassuringTerms.some((item) => t.includes(item));
+  const proMatch = proReassuringTerms.some((item) => t.includes(item));
+
+  if (profil === "pro") {
+    return baseMatch || proMatch;
+  }
+
+  return baseMatch;
 }
 
 function sellerLooksLikeClosing(text) {
@@ -448,18 +579,21 @@ async function send() {
 
   updateTrustFromSellerMessage(val);
   updateSkillsFromSellerMessage(val);
-const validatedSkillsCount = Object.values(skills).filter(Boolean).length;
+
+  const validatedSkillsCount = Object.values(skills).filter(Boolean).length;
+
   const payload = {
-  messages,
-  profil: profilSelect.value,
-  scenario: scenarioSelect.value,
-  mode: modeSelect.value,
-  vehicleAge: vehicleAgeSelect.value,
-  energyType: energyTypeSelect.value,
-  liveSkills: skills,
-  trust,
-  validatedSkillsCount
-};
+    messages,
+    profil: profilSelect.value,
+    scenario: scenarioSelect.value,
+    mode: modeSelect.value,
+    vehicleAge: vehicleAgeSelect.value,
+    energyType: energyTypeSelect.value,
+    liveSkills: skills,
+    trust,
+    validatedSkillsCount
+  };
+
   try {
     const res = await fetch("/api/chat", {
       method: "POST",
@@ -559,3 +693,4 @@ input.addEventListener("keydown", (event) => {
 });
 
 resetDemo();
+
